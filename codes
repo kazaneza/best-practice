@@ -1,0 +1,393 @@
+//styles
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: rgb(246, 246, 246);
+  font-family: 'Lato', sans-serif;
+}
+
+/* todolist list base */
+#toDoList {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: auto;
+  margin: 300px auto auto auto;
+  background-color: white;
+  box-shadow: 0 4px 20px 30px rgba(0, 0, 0, 0.137);
+}
+
+::placeholder {
+  font-family: 'inter', sans-serif;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* title base */
+.title {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 23px;
+  padding-left: 10px;
+  height: 50px;
+}
+
+/* h1 text */
+.title1 {
+  font-family: 'inter', sans-serif;
+  font-size: 15px;
+  font-weight: 100;
+  font-style: normal;
+  padding-top: 8px;
+}
+
+/* icon */
+i {
+  border: none;
+  background: none;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+/* task list base */
+#inputList {
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  height: 50px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.inputTask {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-left: none;
+  border-bottom: none;
+  border-right: none;
+  border-top: 1px solid gray;
+  height: 50px;
+  padding: 0 10px;
+}
+
+/* refresh icon */
+.inputTask i {
+  rotate: 90deg;
+  cursor: pointer;
+}
+
+/* input text  */
+#addList {
+  width: 100%;
+  height: 45px;
+  border: none;
+}
+
+.submiticon {
+  padding: 2px;
+}
+
+.remove-edit {
+  display: flex;
+  justify-items: flex-end;
+  margin-left: auto;
+  padding-right: 23px;
+  text-decoration: none;
+}
+
+/* Clear task button */
+#btnClear {
+  height: 50px;
+  color: rgb(147, 147, 147);
+  border-left: none;
+  border-bottom: none;
+  border-right: none;
+  border-top: 1px solid gray;
+  font-size: 18px;
+  font-family: 'inter', sans-serif;
+  cursor: pointer;
+}
+
+/* task list base */
+.list {
+  background: #fff;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 50px;
+  border-top: 1px solid gray;
+  padding-left: 10px;
+  list-style: none;
+}
+
+/* text */
+.tasks label {
+  font-family: 'inter', sans-serif;
+  padding-left: 10px;
+  width: 100%;
+}
+
+/* text */
+.lists li:nth-child(3) {
+  display: flex;
+  justify-items: flex-end;
+  margin-left: auto;
+  padding-right: 15px;
+  text-decoration: none;
+}
+
+/* text checkbox */
+input[type=checkbox]:checked + label {
+  text-decoration: line-through;
+}
+
+/* text */
+input {
+  font-family: 'inter', sans-serif;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 100;
+}
+
+/* text */
+input:focus {
+  outline: none;
+}
+
+/* text */
+.text {
+  height: 45px;
+  width: 95%;
+  padding-left: 5px;
+  border: none;
+  font-family: 'inter', sans-serif;
+  font-size: 15px;
+}
+
+.textcompleted {
+  text-decoration: line-through;
+  border: none;
+  font-size: 17px;
+  height: 45px;
+  width: 95%;
+  padding-left: 5px;
+  color: #9b9b9b;
+}
+
+/* edit button */
+.edit_list_btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* remove button */
+.remove_btn {
+  cursor: pointer;
+  display: none;
+  border: none;
+  background: none;
+}
+
+.checkbox {
+  cursor: pointer;
+}
+
+.to-do {
+  background: #fff;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-left: 10px;
+  list-style: none;
+  border-bottom: 0.01px solid #d3d3d3;
+}
+
+//js
+import Data from './data.js';
+
+// get inputs from local storage
+
+export default class display {
+  static getToDoListFromStorage = () => {
+    let toDoLists;
+
+    if (JSON.parse(localStorage.getItem('LocalData')) === null) {
+      toDoLists = [];
+    } else {
+      toDoLists = JSON.parse(localStorage.getItem('LocalData'));
+    }
+    return toDoLists;
+  };
+
+  // add inputs to the local storage
+  static addListToStorage = (toDoLists) => {
+    const item = JSON.stringify(toDoLists);
+    localStorage.setItem('LocalData', item);
+  };
+
+  // inputs by number with index
+  static newIndexNum = (toDoLists) => {
+    toDoLists.forEach((item, i) => {
+      item.index = i + 1;
+    });
+  }
+
+  // delete from local storage
+    static deleteListData = (id) => {
+      let toDoLists = this.getToDoListFromStorage();
+      const ListItemToDelete = toDoLists[id];
+
+      toDoLists = toDoLists.filter((item) => item !== ListItemToDelete);
+
+      this.newIndexNum(toDoLists);
+      this.addListToStorage(toDoLists);
+    };
+
+    static ListInputUpdate = (newDescription, id) => {
+      const toDoLists = this.getToDoListFromStorage();
+      const updateList = toDoLists[id];
+
+      toDoLists.forEach((item) => {
+        if (item === updateList) {
+          item.description = newDescription;
+        }
+      });
+
+      this.addListToStorage(toDoLists);
+      this.showLists();
+    };
+
+    static removeToDoListBtn = () => {
+      document.querySelectorAll('.remove_btn').forEach((button) => button.addEventListener('click', (event) => {
+        event.preventDefault();
+        let id;
+        if (button.id > 0) {
+          id = button.id - 1;
+        } else {
+          id = 0;
+        }
+        this.deleteListData(id);
+        this.showLists();
+      }));
+    };
+
+    // section created dynamiclly
+    static toDoListsHtml = ({ description, index }, statusCheck, statusCompleted) => {
+      const ul = document.createElement('ul');
+      ul.className = 'to-do';
+      ul.innerHTML = `
+        <li><input class="checkbox" id="${index}" type="checkbox" ${statusCheck}></li> 
+        <li><input id="LIST${index}" type="text" class="text${statusCompleted}" value="${description}" readonly></li>
+        <li class="remove-edit">
+        <button class="edit_list_btn" id="${index}"><i class="fa fa-ellipsis-v icon"></i></button>
+        <button class="remove_btn" id="${index}"><i class="fa fa-trash-can icon"></i></button>
+        </li>
+      `;
+      return ul;
+    }
+
+    // show listed tasks
+    static showLists = () => {
+      const toDoLists = this.getToDoListFromStorage();
+      document.querySelector('.toDoListContainer').innerHTML = '';
+      toDoLists.forEach((item) => {
+        let statusCheck;
+        let statusCompleted;
+        if (item.completed === true) {
+          statusCheck = 'checked';
+          statusCompleted = 'completed';
+        } else {
+          statusCheck = '';
+          statusCompleted = '';
+        }
+        document.querySelector('.toDoListContainer').appendChild(this.toDoListsHtml(item, statusCheck, statusCompleted));
+      });
+
+      this.removeToDoListBtn();
+      this.editListBtnEvent();
+      this.updateListBtnEvent();
+
+      const event = new Event('listUpdated');
+      document.dispatchEvent(event);
+    };
+
+    // add a task to a list
+    static addLists = (description) => {
+      const toDoLists = this.getToDoListFromStorage();
+      const index = toDoLists.length + 1;
+      const newtask = new Data(description, false, index);
+
+      toDoLists.push(newtask);
+      this.addListToStorage(toDoLists);
+      this.showLists();
+    }
+
+    // update to do list
+    static updateListBtnEvent = () => {
+      document.querySelectorAll('.text').forEach((input) => input.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          const inputListId = 'LIST';
+          const ListIdSelected = event.currentTarget.id;
+          let listID;
+
+          if (!ListIdSelected.includes('LIST')) {
+            listID = inputListId.concat(ListIdSelected);
+          } else {
+            listID = ListIdSelected;
+          }
+
+          document.getElementById(listID).setAttribute('readonly', 'readonly');
+          this.ListInputUpdate(document.getElementById(listID).value, (Number(listID.replace('LIST', '')) - 1));
+        }
+      }));
+    }
+
+    // edit list
+    static editListBtnEvent = () => {
+      let previousList = null;
+      document.querySelectorAll('.edit_list_btn').forEach((button) => button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const inputListId = 'LIST';
+        const ListIdSelected = event.currentTarget.id;
+        let listID;
+
+        if (!ListIdSelected.includes('LIST')) {
+          listID = inputListId.concat(ListIdSelected);
+        } else {
+          listID = ListIdSelected;
+        }
+
+        if (previousList !== null) {
+          previousList.getElementById(listID).removeAttribute('readonly');
+        }
+
+        const listItem = event.target.closest('li');
+        previousList = listItem;
+        const ulItem = event.target.closest('ul');
+
+        listItem.style.background = 'rgb(230, 230, 184)';
+        ulItem.style.background = 'rgb(230, 230, 184)';
+
+        document.getElementById(listID).removeAttribute('readonly');
+        document.getElementById(listID).focus();
+        document.getElementById(listID).style.background = 'rgb(230, 230, 184)';
+        listItem.querySelector('.edit_list_btn').style.display = 'none';
+        listItem.querySelector('.remove_btn').style.display = 'block';
+      }));
+    };
+}
